@@ -36,12 +36,12 @@ public class IncrementSupplementaryDataQueryBuilder implements SupplementaryData
         Query query = entityManager.createNativeQuery(INC_UPDATE_QUERY);
         setCommonProperties(query, caseReference, fieldPath, fieldValue);
         String jsonValue = requestedDataToJson(fieldPath, fieldValue);
-        LOG.info("jsonValue {}", jsonValue);
         query.setParameter("json_value", jsonValue);
         query.setParameter("node_path", Arrays.asList(fieldPath.split(Pattern.quote("."))));
-        LOG.info("leaf_node_key {}, node_path {}, value {}, reference {}",
-            fieldPath.replaceAll(Pattern.quote("."), ","),
-            Arrays.asList(fieldPath.split(Pattern.quote("."))),
+        LOG.info("json_value {}, leaf_node_key {}, node_path {}, value {}, reference {}",
+            query.getParameter("json_value"),
+            query.getParameter("leaf_node_key"),
+            query.getParameter("node_path"),
             query.getParameter("value"),
             query.getParameter("reference"));
         return query;
