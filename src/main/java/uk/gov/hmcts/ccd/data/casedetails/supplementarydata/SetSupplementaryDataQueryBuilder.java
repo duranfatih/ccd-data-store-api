@@ -1,6 +1,6 @@
 package uk.gov.hmcts.ccd.data.casedetails.supplementarydata;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -48,17 +48,18 @@ public class SetSupplementaryDataQueryBuilder implements SupplementaryDataQueryB
         String parentKey = fieldPath.split(Pattern.quote("."))[0];
         String jsonValue = requestedDataToJson(fieldPath, fieldValue);
         query.setParameter("json_value", jsonValue);
+        LOG.info("set json_value {}", jsonValue);
         String parentKeyJsonValue = requestedDataJsonForPath(fieldPath, fieldValue, parentKey);
         query.setParameter("json_value_insert", parentKeyJsonValue);
-        query.setParameter("parent_path", Arrays.asList(parentKey));
+        query.setParameter("parent_path", List.of(parentKey));
         query.setParameter("parent_key", "{" + parentKey + "}");
-        LOG.info("jsonValue {}, leaf_node_key {}, parent_path {}, parent_key {}, value {}, reference {}",
-            query.getParameter("json_value"),
-            query.getParameter("leaf_node_key"),
-            query.getParameter("parent_path"),
-            query.getParameter("parent_key"),
-            query.getParameter("value"),
-            query.getParameter("reference"));
+        LOG.info("set leaf_node_key {}, json_value_insert {}, parent_path {}, parent_key {}, value {}, reference {}",
+            fieldPath.replaceAll(Pattern.quote("."), ","),
+            parentKeyJsonValue,
+            List.of(parentKey),
+            "{" + parentKey + "}",
+            fieldValue.toString(),
+            caseReference);
         return query;
     }
 
